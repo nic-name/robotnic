@@ -1,0 +1,11 @@
+{
+  "lambda": {
+    "role": "robotnic-executor",
+    "name": "robotnic",
+    "region": "eu-west-1"
+  },
+  "api": {
+    "id": "rw0o1we9vj",
+    "module": "robotnic"
+  }
+}

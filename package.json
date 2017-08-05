@@ -1,0 +1,16 @@
+{
+  "name": "robotnic",
+  "version": "1.0.0",
+  "description": "Messenger bot ",
+  "main": "robotnic.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nicola-Marie O'Riordan",
+  "license": "ISC",
+  "dependencies": {
+    "claudia-bot-builder": "^2.15.0",
+    "huh": "^2.0.1",
+    "node-mysql": "^0.4.2"
+  }
+}
