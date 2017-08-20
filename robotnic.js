@@ -12,9 +12,9 @@ var fbTemplate = botBuilder.fbTemplate;
 
 //var kill_switch = true;
 
-// Note getFbResponse function includes recurrision for 'follow-on' messages.
-// as a result we will track these recurrisions, and break if they become stuck.
-var recurrision_count = 0;
+// Note getFbResponse function includes recursion for 'follow-on' messages.
+// as a result we will track these recursions, and break if they become stuck.
+var recursion_count = 0;
 
 /****** START MAIN BODY *******/
 //object that's returned. Message is a variable that's populated by Claudia. It contains all the information that came from Facebook
@@ -39,7 +39,7 @@ module.exports = botBuilder(message => {
 		const wfkey = getButtonMessage(user_text);
 	    
 		//generate the response based on the workflow key associated with the button key.
-		recurrision_count = 0;
+		recursion_count = 0;
 		const fbMessageArray = getFbResponse(wfkey);
 		
      // Database calls to log user Input
@@ -89,26 +89,39 @@ function getButtonMessage(user_text){
 // Goal of this function is to accept in a workflow key
 // and return an array of facebook templates to send back to facebook
 function getFbResponse(wf_key){
-	//add one per recurrision itteration
-	recurrision_count ++;
+	//add one per recursion itteration
+	recursion_count ++;
 	//write to lambda log
-	console.log('recurrision_count (' + recurrision_count + ')' );
+	console.log('recursion_count (' + recursion_count + ')' );
 	
 	var responseArray = [];
 	var fbResponse = null;
 	
-	if(recurrision_count < 2){
+	if(recursion_count < 2){
+		console.log('Adding SEEN and TYPING_ON' );
 		//instanciate some natural chat behaviours
 		var seen = new fbTemplate.ChatAction('mark_seen').get();
 		var typing = new fbTemplate.ChatAction('typing_on').get();
 		
-		//pauses can create buggy behaviour
-		//const pause = new fbTemplate.Pause(10).get();//be careful of the pauses as they may scare the crap out of you!
-		
 		//Add the chat behviours to the responseArray
 		responseArray.push(seen);
-		//responseArray.push(pause);
 		responseArray.push(typing);
+	}
+	else if (recursion_count < 6){
+		//this section applies for recursion_count >=2 but < 6
+		//which is for the follow-on messages
+		
+		//the Pause time decreases for each follow-on
+		var pauseTime = 1500;
+		console.log('Adding PAUSE : ' + pauseTime + ' And TYPING_ON' );
+		//pauses can create buggy behaviour
+		var pause = new fbTemplate.Pause(pauseTime).get();
+		var typing = new fbTemplate.ChatAction('typing_on').get();
+		
+		responseArray.push(typing);
+		responseArray.push(pause);
+		
+		
 	}
 	
 	//write to lambda log
@@ -157,7 +170,7 @@ function getFbResponse(wf_key){
 	
 	//Now Check for any follow on messages 
 	//Also prevent follow_ons getting stuck in infinite loops 
-	if(wf_response.follow_on && recurrision_count < 10){
+	if(wf_response.follow_on && recursion_count < 10){
 		console.log('Creating Follow on');
 		var tempArray = getFbResponse(wf_response.follow_on);
 		responseArray = responseArray.concat(tempArray); //Add the result to the responseArray

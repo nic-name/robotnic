@@ -148,7 +148,7 @@ module.exports = {
    "follow_on_message_5"        : {
 						 "text"	  : "Hope you learned more about the digital dystopia. Follow my page for more links and be sure to come back and engage when I have new content",
 						 "button" :  {"btn_f5_exit_rply" : "Exit"
-	                                 ,"btn_f4_restart_rply"  : "Exit" 
+	                                 ,"btn_f4_restart_rply"  : "Restart" 
 									 }					 
 						            
 					    }
